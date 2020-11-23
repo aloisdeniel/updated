@@ -89,7 +89,7 @@ final property = Update<int>();
 
 #### Updating
 
-The easiest way to update your `Update<T>` instance is by using the `update` function that returns a stream with the sequence of updates.
+The easiest way to update your `Update<T>` instance is by using the `update` function that returns a `Stream` with the sequence of updates.
 
 ```dart
 var value = Update<int>();
@@ -108,6 +108,10 @@ final updateStream =  update(
     override: UpdateOverride.cancelPrevious,
   ));
 ```
+
+> If an `optimisticValue` is given, then its value is returned by the `Update.mapValue` method. This may be useful to display the result to the user beforehand if we're able to anticipate it (for example, by liking a tweet on twitter, we can fill the heart before receiving the result of the request that validates it).
+
+> If a new update is triggered with the `cancelPrevious` option, then the previous update stream won't emit its final updates.
 
 #### Mapping result
 
