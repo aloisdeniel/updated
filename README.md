@@ -157,3 +157,33 @@ Widget build(BuildContext context)
     );
 }
 ```
+
+#### UpdateNotifier
+
+An `UpdateNotifier<T>` is a mutable store for an `Update<T>` instance.
+
+The [update] is updated by calling [execute].
+
+```dart
+final notifier = UpdateNotifier<int>();
+
+final currentUpdate = notifier.update;
+
+notifier.updateChanged.listen((update) {
+    // ...
+});
+
+notifier.execute(
+    // The actual async operation
+    updater: () async {
+      // your async calls
+    },
+    // This value will be available durint loading states
+    optimisticValue: 32, 
+    // To change the behaviour when an update is triggered but the previous isn't finished yet. 
+    // If a previous update is cancelled then its stream is closed an no more events are emitted.
+    override: UpdateOverride.cancelPrevious,
+  ));
+```
+
+> If you're using patterns base on immutable data (like redux, MVU), using `update` function directly may be more appropriate.
