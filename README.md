@@ -89,8 +89,25 @@ final property = Update<int>();
 
 #### Updating
 
-The easiest way to update your `Update<T>` instance is by using the `update` function.
+The easiest way to update your `Update<T>` instance is by using the `update` function that returns a stream with the sequence of updates.
 
+```dart
+var value = Update<int>();
+
+final updateStream =  update(
+    // The actual async operation
+    updater: () async {
+      // your async calls
+    },
+    // Make sure to always return the current value. This makes cancellation possible.
+    getUpdate: () => value, 
+    // This value will be available durint loading states
+    optimisticValue: 32, 
+    // To change the behaviour when an update is triggered but the previous isn't finished yet. 
+    // If a previous update is cancelled then its stream is closed an no more events are emitted.
+    override: UpdateOverride.cancelPrevious,
+  ));
+```
 
 #### Mapping result
 
