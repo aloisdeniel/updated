@@ -60,6 +60,18 @@ abstract class Update<T> {
     );
   }
 
+  /// Indicates whether the update is currently [Updated].
+  bool get hasSucceeded {
+    return map(
+      updated: (state) => true,
+      failedRefresh: (state) => false,
+      refreshing: (state) => false,
+      failedUpdate: (state) => false,
+      notLoaded: (state) => false,
+      updating: (state) => false,
+    );
+  }
+
   /// Map the current value to a [K] value , if available. If so, the [value] method is called, else
   /// the [orElse] method is called.
   K mapValue<K>({
@@ -132,9 +144,6 @@ abstract class Update<T> {
     if (state is NotLoaded<T>) {
       return notLoaded(state);
     }
-    if (state is NotLoaded<T>) {
-      return notLoaded(state);
-    }
     if (state is FailedUpdate<T>) {
       return failedUpdate(state);
     }
@@ -149,6 +158,42 @@ abstract class Update<T> {
     }
 
     throw Exception();
+  }
+
+  /// Map the current state to a [K] value.
+  ///
+  /// The [orElse] callback is used for any missing case.
+  K maybeMap<K>({
+    @required K Function() orElse,
+    K Function(NotLoaded<T> state) notLoaded,
+    K Function(Updating<T> state) updating,
+    K Function(FailedUpdate<T> state) failedUpdate,
+    K Function(Refreshing<T> state) refreshing,
+    K Function(FailedRefresh<T> state) failedRefresh,
+    K Function(Updated<T> state) updated,
+  }) {
+    assert(orElse != null);
+    final state = this;
+    if (state is Updated<T>) {
+      return updated != null ? updated(state) : orElse();
+    }
+    if (state is NotLoaded<T>) {
+      return notLoaded != null ? notLoaded(state) : orElse();
+    }
+    if (state is FailedUpdate<T>) {
+      return failedUpdate != null ? failedUpdate(state) : orElse();
+    }
+    if (state is Updating<T>) {
+      return updating != null ? updating(state) : orElse();
+    }
+    if (state is Refreshing<T>) {
+      return refreshing != null ? refreshing(state) : orElse();
+    }
+    if (state is FailedRefresh<T>) {
+      return failedRefresh != null ? failedRefresh(state) : orElse();
+    }
+
+    return orElse();
   }
 }
 
@@ -223,6 +268,12 @@ class Updated<T> extends Update<T> {
       : id = previous.id,
         updatedAt = DateTime.now(),
         super._();
+
+  const Updated({
+    @required this.id,
+    @required this.updatedAt,
+    @required this.value,
+  }) : super._();
 
   final int id;
   final DateTime updatedAt;

@@ -1,3 +1,15 @@
+## 0.1.5
+
+- Fixed `maybeMap`.
+
+## 0.1.4
+
+- Added `maybeMap` and `hasSucceeded` to `Update`.
+
+## 0.1.3
+
+- Added default constructor for `Updated`.
+
 ## 0.1.2
 
 - Added the `UpdateNotifier<T>`.
