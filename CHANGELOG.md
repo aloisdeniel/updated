@@ -1,3 +1,7 @@
+## 0.1.7
+
+- Fixed `expirationDate`.
+
 ## 0.1.6
 
 - Added `expirationDate` and `expirationDuration`.

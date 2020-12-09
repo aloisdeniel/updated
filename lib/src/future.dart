@@ -92,7 +92,7 @@ Stream<Update<T>> update<T>({
         expirationDate ??= state.updatedAt.add(expirationDuration);
       }
       final isExpired =
-          expirationDate != null && expirationDate.isBefore(DateTime.now());
+          expirationDate == null || expirationDate.isBefore(DateTime.now());
       if (isExpired) {
         final updating = Refreshing.fromUpdated(
           state,
