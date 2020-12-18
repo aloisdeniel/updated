@@ -1,3 +1,7 @@
+## 0.1.8
+
+- Added `Update.combine` function.
+
 ## 0.1.7
 
 - Fixed `expirationDate`.

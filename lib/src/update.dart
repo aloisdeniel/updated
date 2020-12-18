@@ -16,6 +16,202 @@ abstract class Update<T> {
   /// Internal constructor.
   const Update._();
 
+  /// Combine [update1] and [update2] as a new [Update].
+  ///
+  /// If two values are available, they are merged into a new one
+  /// with [combineValue].
+  static Update<T3> combine<T1, T2, T3>({
+    @required Update<T1> update1,
+    @required Update<T2> update2,
+    @required T3 Function(T1 value1, T2 value2) combineValue,
+  }) {
+    assert(update1 != null);
+    assert(update2 != null);
+    assert(combineValue != null);
+
+    return update1.map(
+      notLoaded: (state1) => update2.maybeMap(
+        failedUpdate: (state2) => FailedUpdate<T3>(
+          id: state2.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        refreshing: (state2) => NotLoaded<T3>(),
+        failedRefresh: (state2) => FailedUpdate<T3>(
+          id: state2.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        orElse: () => NotLoaded<T3>(),
+      ),
+      updating: (state1) => update2.map(
+        failedUpdate: (state2) => FailedUpdate<T3>(
+          id: state1.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        refreshing: (state2) => Updating<T3>(
+          id: state2.id ^ state2.id,
+        ),
+        failedRefresh: (state2) => FailedUpdate<T3>(
+          id: state1.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        notLoaded: (state2) => NotLoaded<T3>(),
+        updated: (state2) => Updating<T3>(
+          id: state1.id ^ state2.id,
+        ),
+        updating: (state2) => Updating<T3>(
+          id: state1.id ^ state2.id,
+        ),
+      ),
+      failedUpdate: (state1) => FailedUpdate<T3>(
+        id: state1.id,
+        error: state1.error,
+        stackTrace: state1.error,
+      ),
+      refreshing: (state1) => update2.map(
+        failedUpdate: (state2) => FailedUpdate<T3>(
+          id: state1.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        refreshing: (state2) => Refreshing<T3>.fromUpdated(
+          Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.previousUpdate.updatedAt,
+            value: combineValue(
+              state1.previousUpdate.value,
+              state2.previousUpdate.value,
+            ),
+          ),
+          id: state2.id ^ state2.id,
+        ),
+        failedRefresh: (state2) => FailedRefresh<T3>(
+          previousUpdate: Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.previousUpdate.updatedAt,
+            value: combineValue(
+              state1.previousUpdate.value,
+              state2.previousUpdate.value,
+            ),
+          ),
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        notLoaded: (state2) => NotLoaded<T3>(),
+        updated: (state2) => Refreshing<T3>.fromUpdated(
+          Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.previousUpdate.updatedAt,
+            value: combineValue(
+              state1.previousUpdate.value,
+              state2.value,
+            ),
+          ),
+          id: state2.id ^ state2.id,
+        ),
+        updating: (state2) => Updating<T3>(
+          id: state1.id ^ state2.id,
+        ),
+      ),
+      failedRefresh: (state1) => update2.map(
+        failedUpdate: (state2) => FailedUpdate<T3>(
+          id: state1.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        refreshing: (state2) => FailedRefresh<T3>(
+          previousUpdate: Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.previousUpdate.updatedAt,
+            value: combineValue(
+              state1.previousUpdate.value,
+              state2.previousUpdate.value,
+            ),
+          ),
+          error: state1.error,
+          stackTrace: state1.error,
+        ),
+        failedRefresh: (state2) => FailedRefresh<T3>(
+          previousUpdate: Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.previousUpdate.updatedAt,
+            value: combineValue(
+              state1.previousUpdate.value,
+              state2.previousUpdate.value,
+            ),
+          ),
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        notLoaded: (state2) => FailedUpdate<T3>(
+          id: state1.id,
+          error: state1.error,
+          stackTrace: state1.stackTrace,
+        ),
+        updated: (state2) => FailedRefresh<T3>(
+          previousUpdate: Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.previousUpdate.updatedAt,
+            value: combineValue(
+              state1.previousUpdate.value,
+              state2.value,
+            ),
+          ),
+          error: state1.error,
+          stackTrace: state1.error,
+        ),
+        updating: (state2) => Updating<T3>(
+          id: state1.id ^ state2.id,
+        ),
+      ),
+      updated: (state1) => update2.map(
+        failedUpdate: (state2) => FailedUpdate<T3>(
+          id: state1.id ^ state2.id,
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        refreshing: (state2) => Refreshing<T3>.fromUpdated(
+          Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.updatedAt,
+            value: combineValue(
+              state1.value,
+              state2.previousUpdate.value,
+            ),
+          ),
+          id: state2.id ^ state2.id,
+        ),
+        failedRefresh: (state2) => FailedRefresh<T3>(
+          previousUpdate: Updated<T3>(
+            id: state1.id ^ state2.id,
+            updatedAt: state1.updatedAt,
+            value: combineValue(
+              state1.value,
+              state2.previousUpdate.value,
+            ),
+          ),
+          error: state2.error,
+          stackTrace: state2.error,
+        ),
+        notLoaded: (state2) => NotLoaded<T3>(),
+        updated: (state2) => Updated<T3>(
+          id: state1.id ^ state2.id,
+          updatedAt: state1.updatedAt,
+          value: combineValue(
+            state1.value,
+            state2.value,
+          ),
+        ),
+        updating: (state2) => Updating<T3>(
+          id: state1.id ^ state2.id,
+        ),
+      ),
+    );
+  }
+
   /// Gets the value if available (regardless of it is an optimistic one or not), else returns the
   /// result of [defaultValue].
   T getValue({
@@ -215,6 +411,12 @@ class NotLoaded<T> extends Update<T> {
 }
 
 class Updating<T> extends Update<T> {
+  Updating({
+    @required this.id,
+    this.optimisticValue,
+  })  : startedAt = DateTime.now(),
+        super._();
+
   Updating.fromNotLoaded(
     NotLoaded<T> previous, {
     @required this.id,
@@ -304,6 +506,13 @@ class FailedUpdate<T> extends Update<T> {
         id = previous.id,
         super._();
 
+  FailedUpdate({
+    @required this.id,
+    @required this.error,
+    @required this.stackTrace,
+  })  : failedAt = DateTime.now(),
+        super._();
+
   final int id;
   final DateTime failedAt;
   final dynamic error;
@@ -384,6 +593,14 @@ class FailedRefresh<T> extends Update<T> {
   })  : failedAt = DateTime.now(),
         id = previous.id,
         previousUpdate = previous.previousUpdate,
+        super._();
+
+  FailedRefresh({
+    @required this.previousUpdate,
+    @required this.error,
+    @required this.stackTrace,
+  })  : failedAt = DateTime.now(),
+        id = previousUpdate.id,
         super._();
 
   final int id;
