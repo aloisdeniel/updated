@@ -23,11 +23,11 @@ abstract class Update<T> {
   static Update<T3> combine<T1, T2, T3>({
     @required Update<T1> update1,
     @required Update<T2> update2,
-    @required T3 Function(T1 value1, T2 value2) combineValue,
+    @required T3 Function(T1 value1, T2 value2) combineValues,
   }) {
     assert(update1 != null);
     assert(update2 != null);
-    assert(combineValue != null);
+    assert(combineValues != null);
 
     return update1.map(
       notLoaded: (state1) => update2.maybeMap(
@@ -81,7 +81,7 @@ abstract class Update<T> {
           Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.previousUpdate.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.previousUpdate.value,
               state2.previousUpdate.value,
             ),
@@ -92,7 +92,7 @@ abstract class Update<T> {
           previousUpdate: Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.previousUpdate.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.previousUpdate.value,
               state2.previousUpdate.value,
             ),
@@ -105,7 +105,7 @@ abstract class Update<T> {
           Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.previousUpdate.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.previousUpdate.value,
               state2.value,
             ),
@@ -126,7 +126,7 @@ abstract class Update<T> {
           previousUpdate: Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.previousUpdate.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.previousUpdate.value,
               state2.previousUpdate.value,
             ),
@@ -138,7 +138,7 @@ abstract class Update<T> {
           previousUpdate: Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.previousUpdate.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.previousUpdate.value,
               state2.previousUpdate.value,
             ),
@@ -155,7 +155,7 @@ abstract class Update<T> {
           previousUpdate: Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.previousUpdate.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.previousUpdate.value,
               state2.value,
             ),
@@ -177,7 +177,7 @@ abstract class Update<T> {
           Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.value,
               state2.previousUpdate.value,
             ),
@@ -188,7 +188,7 @@ abstract class Update<T> {
           previousUpdate: Updated<T3>(
             id: state1.id ^ state2.id,
             updatedAt: state1.updatedAt,
-            value: combineValue(
+            value: combineValues(
               state1.value,
               state2.previousUpdate.value,
             ),
@@ -200,7 +200,7 @@ abstract class Update<T> {
         updated: (state2) => Updated<T3>(
           id: state1.id ^ state2.id,
           updatedAt: state1.updatedAt,
-          value: combineValue(
+          value: combineValues(
             state1.value,
             state2.value,
           ),
