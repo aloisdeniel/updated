@@ -1,6 +1,6 @@
 name: updated
 description: Managing state of asynchronous updates as a simple dart representation.
-version: 0.1.9
+version: 0.1.10
 homepage: https://github.com/aloisdeniel/updated
 
 environment:

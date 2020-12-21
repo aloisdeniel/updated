@@ -1,3 +1,7 @@
+## 0.1.10
+
+- Added `mapUpdate` method.
+
 ## 0.1.9
 
 - Added `Update.combine` function.

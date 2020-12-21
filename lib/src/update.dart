@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:updated/updated.dart';
 
 /// An update represents the lifecycle of a [T] value that can be loaded asynchronously.
 ///
@@ -15,6 +16,51 @@ abstract class Update<T> {
 
   /// Internal constructor.
   const Update._();
+
+  /// Map the update state to an [Update<K>] where values are converted with [mapValue].
+  Update<K> mapUpdate<K>({
+    @required K Function(T value1) mapValue,
+  }) {
+    return map(
+      notLoaded: (notLoaded) => NotLoaded<K>(),
+      updating: (updating) => Updating<K>(
+        id: updating.id,
+        optimisticValue: updating.optimisticValue != null
+            ? mapValue(updating.optimisticValue)
+            : null,
+      ),
+      updated: (updated) => Updated<K>(
+        id: updated.id,
+        updatedAt: updated.updatedAt,
+        value: mapValue(updated.value),
+      ),
+      refreshing: (refreshing) => Refreshing<K>.fromUpdated(
+        Updated<K>(
+          id: refreshing.previousUpdate.id,
+          updatedAt: refreshing.previousUpdate.updatedAt,
+          value: mapValue(refreshing.previousUpdate.value),
+        ),
+        id: refreshing.previousUpdate.id,
+        optimisticValue: refreshing.optimisticValue != null
+            ? mapValue(refreshing.optimisticValue)
+            : null,
+      ),
+      failedUpdate: (failedUpdate) => FailedUpdate<K>(
+        id: failedUpdate.id,
+        error: failedUpdate.error,
+        stackTrace: failedUpdate.stackTrace,
+      ),
+      failedRefresh: (failedRefresh) => FailedRefresh<K>(
+        previousUpdate: Updated<K>(
+          id: failedRefresh.previousUpdate.id,
+          updatedAt: failedRefresh.previousUpdate.updatedAt,
+          value: mapValue(failedRefresh.previousUpdate.value),
+        ),
+        error: failedRefresh.error,
+        stackTrace: failedRefresh.stackTrace,
+      ),
+    );
+  }
 
   /// Combine [update1] and [update2] as a new [Update].
   ///
