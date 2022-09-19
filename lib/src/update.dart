@@ -260,8 +260,8 @@ abstract class Update<T> {
 
   /// Gets the value if available (regardless of it is an optimistic one or not), else returns the
   /// result of [defaultValue].
-  T getValue({
-    @required T Function() defaultValue,
+  T? getValue({
+    @required T? Function() defaultValue,
   }) {
     assert(defaultValue != null);
     return mapValue(
