@@ -354,8 +354,8 @@ abstract class Update<T> {
 
   /// Map the current error to a [K] value , if in a failure state. If so, the [error] method is called, else
   /// the [orElse] method is called.
-  K mapError<K>({
-    @required K Function(dynamic error, StackTrace stackTrace) error,
+  K mapError<K, E extends Exception>({
+    @required K Function(E error, StackTrace stackTrace) error,
     @required K Function() orElse,
   }) {
     assert(error != null);
